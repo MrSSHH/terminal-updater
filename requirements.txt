@@ -1,0 +1,7 @@
+pandas
+pyautogui
+opencv-python
+numpy
+playsound==1.2.2
+pynput
+openpyxl
