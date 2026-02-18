@@ -22,9 +22,7 @@ except Exception as e:
     raise SystemExit("Error: Check if Assets/Excels/Data.xlsx exists.")
 
 columns = ['Name', 'Customer', 'UDID', 'Version', 'Serial']
-forbidden_customers = ["3466", "3208", "1742", "3456", "3589", "1099", "3244", "3124", 
-                       "4446", "1248", "4423", "4598", "1433", "4497", "1580", "1351", 
-                       "4807", "1679", "1946", "3448", "3283", "1438", "4923", "1852", "4318"]
+forbidden_customers = []
 
 file_num = 0
 rows_to_add = []
