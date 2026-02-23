@@ -1,4 +1,4 @@
-# Automation Suite 🚀
+# Terminal Automation Suite 🚀
 
 A two-stage automation pipeline designed to filter device inventory and perform bulk firmware updates via UI automation.
 
