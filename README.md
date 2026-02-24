@@ -50,7 +50,7 @@ This suite eliminates the manual labor of updating device versions. It first cle
 1. **Clone the repository:**
 ```bash
 git clone https://github.com/MrSSHH/terminal-updater.git
-cd terminal-automation-suite
+cd terminal-updater
 
 ```
 
