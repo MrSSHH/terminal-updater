@@ -1,39 +1,40 @@
 # Terminal Automation Suite 🚀
 
-A robust, two-stage automation pipeline designed to filter device inventory and perform bulk firmware updates via computer vision and UI automation. This tool simulates human interaction to handle repetitive tasks in legacy software environments where APIs are unavailable.
-
----
-
-## 📋 Overview
-
-This suite eliminates the manual labor of updating device versions. It first cleans and segments your data based on specific business rules, then uses **OpenCV** and **PyAutoGUI** to interact with the update software exactly like a human would.
+A high-efficiency automation pipeline designed to filter massive device inventories and perform bulk firmware updates via computer vision. This suite bypasses manual data entry by simulating human interaction with legacy UI software.
 
 ---
 
 ## 🏗️ Project Structure
 
-* **`filter_data.py`**: Pre-processes the master Excel sheet, applies filters, and splits data into batch files.
-* **`main.py`**: The automation engine that handles UI clicks, image recognition, and version entry.
-* **`Assets/`**: Contains the required Excel data and images for UI recognition.
-* **`Sounds/`**: Audio cues for process status and alerts.
-* **`config.json`**: Stores saved screen coordinates to skip calibration on repeat runs.
+* **`filter_data.py`**: The "Brain." It cleans the master Excel, filters by hardware/customer, and splits data into manageable chunks.
+* **`main.py`**: The "Hands." The automation engine that handles UI clicks, image recognition, and version input.
+* **`Assets/`**:
+* `Excels/`: Your input `Data.xlsx` and the generated `toUpdate` batches.
+* `Images/`: Reference screenshots for OpenCV to "see" the UI.
+* `Sounds/`: Audio feedback files (`beep.mp3`, etc.).
+
+
 
 ---
 
 ## 🛠️ Features
 
-### 1. Smart Data Filtering (`filter_data.py`)
+### 1. Smart Data Filtering
 
-* **Exclusion Logic**: Automatically skips "forbidden" customer IDs and specific hardware (e.g., EF500).
-* **Version Targeting**: Filters for devices below a specific version threshold (e.g., v808).
-* **Batching**: Splits large datasets into chunks to ensure system stability.
+* **Hardware Exclusion**: Automatically ignores specific models (e.g., serial numbers starting with `EF500`).
+* **Version Logic**: Only targets devices where both current and pending versions are below the `TARGET_VERSION` (default: 808).
+* **Automatic Chunking**: Large datasets are automatically split into batches of **300** to prevent software memory leaks or crashes.
 
-### 2. Intelligent Automation (`main.py`)
+### 2. Intelligent Automation
 
-* **Coordinate Calibration**: Map your UI once; the script remembers coordinates via `config.json`.
-* **Computer Vision**: Uses **OpenCV** template matching to verify that the "Update Window" is actually visible before clicking.
-* **Safety Kill-Switch**: Press `Ctrl + Esc` at any time to halt the process immediately.
-* **Audio Feedback**: Uses distinct beeps (`.mp3`) to notify you of successful steps or required manual intervention.
+* **Visual Verification**: Uses **OpenCV** template matching to ensure the update window is open before clicking.
+* **Coordinate Memory**: Calibration is saved to `config.json` so you only have to map your screen once.
+* **Fail-Safes**:
+* `Ctrl + Esc`: Emergency stop.
+* `Ctrl + Left Click`: Precise coordinate mapping.
+* Audio cues to keep you informed without looking at the screen.
+
+
 
 ---
 
@@ -41,78 +42,56 @@ This suite eliminates the manual labor of updating device versions. It first cle
 
 ### Prerequisites
 
-* **Windows OS** (Required for `ctypes` alerts and Windows-specific UI focus).
+* **Windows OS** (Required for Win32 API alerts and UI interaction).
 * **Python 3.8+**
-* **Display Settings**: Set Windows Display Scaling to **100%** for best image recognition accuracy.
+* **Display**: Set Windows scaling to **100%** for image recognition accuracy.
 
 ### Installation
 
-1. **Clone the repository:**
 ```bash
 git clone https://github.com/MrSSHH/terminal-updater.git
 cd terminal-updater
-
-```
-
-
-2. **Install dependencies:**
-```bash
 pip install -r requirements.txt
 
 ```
-
-
 
 ---
 
 ## 🖥️ Terminal Usage
 
-### Stage 1: Filter & Prepare Data
+### Step 1: Filter & Prepare
 
-Process your master inventory to create the target update list in `Assets\Excels\data.xlsx`.
-
-```bash
-$ python filter_data.py
-[OK] 1,200 devices scanned.
-[OK] 450 devices filtered (v808 threshold).
-[OK] Assets\Excels\data.xlsx generated successfully.
-
-```
-
-### Stage 2: Execute UI Automation
-
-Run the main engine. Use flags to customize the experience.
-
-```bash
-# Basic run
-$ python main.py
-
-# Verbose mode with silent notifications and fast start
-$ python main.py --verbose --silent --short-wait
-
-```
-
-#### **Calibration Walkthrough**
-
-If no `config.json` is found, the script will guide you through setup:
+Place your master file in `Assets\Excels\Data.xlsx` and run the filter:
 
 ```text
-$ python main.py
+$ python filter_data.py
+
+INFO: Created: Assets\Excels\toUpdate\output_0.xlsx
+INFO: Created: Assets\Excels\toUpdate\output_1.xlsx
+INFO: Created final: Assets\Excels\toUpdate\output_2.xlsx
+INFO: Filtering complete!
+
+```
+
+### Step 2: Execute Update
+
+Run the automation. Use `--verbose` to see real-time confidence scores for image matching.
+
+```text
+$ python main.py --verbose --short-wait
 
 [?] Use the previous settings (Y/N)? n
-[?] Enter the desired version (e.g., 802): 915
+[?] Enter the desired version (e.g., 802): 808
 [!] Place your cursor on the UUID input field. Press Ctrl + Left Click.
-    Position confirmed at (412, 530).
+    Position confirmed: (450, 310)
 
-[!] Place your cursor on the Update button. Press Ctrl + Left Click.
-    Position confirmed at (890, 530).
+[!] Configuration saved to config.json. 
+[!] Once ready, press OK. Starting in 3s...
 
-[!] Configuration saved to config.json.
-[!] Once ready, press OK to start. You will have 5 seconds to open the window.
-
-14:22:01 ComaxLogger INFO  Starting upgrade for UUID: 8832-XJ-11
-14:22:03 ComaxLogger DEBUG Image Match Found: Update Window (Confidence: 0.94)
-14:22:05 ComaxLogger INFO  UUID 8832-XJ-11 updated successfully. (14 Remaining)
+10:15:02 ComaxLogger DEBUG Starting to upgrade UUID: 8832-XJ-11
+10:15:03 ComaxLogger DEBUG Image recognition confidence: 0.98
+10:15:04 ComaxLogger INFO  Click at (450, 310)
+10:15:08 ComaxLogger DEBUG UUID 8832-XJ-11 updated successfully.
 
 ```
 
@@ -120,15 +99,15 @@ $ python main.py
 
 ## ⌨️ Command Line Arguments
 
-| Flag | Short | Description |
-| --- | --- | --- |
-| `--silent` | `-s` | Disable all beep/audio notifications. |
-| `--verbose` | `-v` | Output all debug logs to the terminal. |
-| `--short-wait` |  | Use a 3-second countdown instead of 5 seconds. |
-
-## 🛑 Safety & Controls
-
-* **Emergency Stop**: Press `Ctrl + Esc` to kill the script immediately.
-* **Calibration**: If your window moves, run the script and select `N` when asked to "Use previous settings" to re-map the coordinates.
+| Argument | Description |
+| --- | --- |
+| `-s`, `--silent` | Disable all sound notifications. |
+| `-v`, `--verbose` | Output all debug logs and image matching scores to the terminal. |
+| `--short-wait` | Reduces the initial startup countdown to 3 seconds. |
 
 ---
+
+## 🛑 Safety & Control
+
+* **Stop Process**: Hold `Ctrl + Esc` to kill the automation loop.
+* **Re-Calibration**: If your UI layout changes, run the script and choose `N` at the "Use previous settings" prompt to reset `config.json`.
