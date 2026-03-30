@@ -13,7 +13,7 @@ import os
 import sys
 
 # Setup logging
-logger = logging.getLogger('ComaxLogger')
+logger = logging.getLogger('Logger')
 logger.setLevel(logging.DEBUG)
 
 # Create a file handler
