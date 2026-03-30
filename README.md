@@ -88,10 +88,10 @@ $ python main.py --verbose --short-wait
 [!] Configuration saved to config.json. 
 [!] Once ready, press OK. Starting in 3s...
 
-10:15:02 ComaxLogger DEBUG Starting to upgrade UUID: 8832-XJ-11
-10:15:03 ComaxLogger DEBUG Image recognition confidence: 0.98
-10:15:04 ComaxLogger INFO  Click at (450, 310)
-10:15:08 ComaxLogger DEBUG UUID 8832-XJ-11 updated successfully.
+10:15:02 Logger DEBUG Starting to upgrade UUID: 8832-XJ-11
+10:15:03 Logger DEBUG Image recognition confidence: 0.98
+10:15:04 Logger INFO  Click at (450, 310)
+10:15:08 Logger DEBUG UUID 8832-XJ-11 updated successfully.
 
 ```
 
